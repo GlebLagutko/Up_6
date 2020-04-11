@@ -2,6 +2,7 @@ package sample;
 
 import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.universe.SimpleUniverse;
+import javafx.scene.input.KeyCode;
 
 import javax.media.j3d.*;
 import javax.swing.*;
@@ -101,14 +102,14 @@ public class SecondTask extends JFrame {
 
         // Create transformations for the positional lights
         transform = new Transform3D();
-        Vector3d firstPointPos = new Vector3d(-1.5, 0, -3.5);
+        Vector3d firstPointPos = new Vector3d(1.0, 0, -3.5);
         transform.set(firstPointPos);
         TransformGroup firstPointTransformGroup = new TransformGroup(transform);
         sceneTransformGroup.addChild(firstPointTransformGroup);
 
 
         transform = new Transform3D();
-        Vector3d secondPointPos = new Vector3d(1, 1.5, 2.0);
+        Vector3d secondPointPos = new Vector3d(1, 1.5, 1.5);
         transform.set(secondPointPos);
         TransformGroup secondPointTransformGroup = new TransformGroup(transform);
         sceneTransformGroup.addChild(secondPointTransformGroup);
@@ -170,8 +171,10 @@ public class SecondTask extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                    String newText = text3D.getString().substring(0, text3D.getString().length() - 1);
-                    text3D.setString(newText);
+                    if (text3D.getString().length() != 0) {
+                        String newText = text3D.getString().substring(0, text3D.getString().length() - 1);
+                        text3D.setString(newText);
+                    }
                 } else if (e.getExtendedKeyCode() == KeyEvent.VK_INSERT) {
                     Color color = JColorChooser.showDialog(null, "Choose color for left light!", Color.black);
                     if (color != null) {

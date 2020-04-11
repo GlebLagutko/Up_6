@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Random;
 
 public class ControllerFirstTask {
@@ -33,9 +34,9 @@ public class ControllerFirstTask {
     private Random random;
     private int[][] table;
     private Image image;
-    private ImageView[] answer;
-    private final static String[] ELEMENTS = {"3", "4", "5", "10", "20"};
-    private int num = 5;
+    private int[] current;
+    private final static String[] ELEMENTS = {"2", "3", "4", "5", "10", "20"};
+    private int num = 2;
 
     public void initialize() {
         random = new Random();
@@ -45,7 +46,7 @@ public class ControllerFirstTask {
         restartButton.setOnAction(e -> shuffle());
 
         userChoiceBox.setItems(FXCollections.observableArrayList(ELEMENTS));
-        userChoiceBox.setValue("5");
+        userChoiceBox.setValue("2");
         userChoiceBox.setOnAction(e -> {
             num = Integer.parseInt(userChoiceBox.getValue());
             setSizes();
@@ -81,6 +82,7 @@ public class ControllerFirstTask {
                         , iconWidth, iconHeight), null);
 
                 ImageView imageView = new ImageView(image1);
+
                 imageView.setOnMouseClicked(f -> createMyListener(imageView));
 
                 images[i * num + j] = imageView;
@@ -90,36 +92,36 @@ public class ControllerFirstTask {
 
     private void createMyListener(ImageView imageView) {
         int index = 0;
-        for (int k = 0; k < answer.length; k++) {
-            if (answer[k] == imageView) {
-                index = k;
-                break;
+        int number = -1;
+        for (int k = 0; k < current.length; k++) {
+            if (current[k] != -1) {
+                if (images[k] == imageView) {
+                    number = k;
+                    index = current[k];
+                    break;
+                }
             }
         }
         int row, column;
         row = index / num + 1;
         column = index % num + 1;
         if (table[row - 1][column] == 0) {
-            answer[index - num] = imageView;
-            answer[index] = null;
+            current[number] = index - num;
             table[row - 1][column] = 1;
             table[row][column] = 0;
             updateTable();
         } else if (table[row + 1][column] == 0) {
-            answer[index + num] = imageView;
-            answer[index] = null;
+            current[number] = index + num;
             table[row + 1][column] = 1;
             table[row][column] = 0;
             updateTable();
         } else if (table[row][column - 1] == 0) {
-            answer[index - 1] = imageView;
-            answer[index] = null;
+            current[number] = index - 1;
             table[row][column - 1] = 1;
             table[row][column] = 0;
             updateTable();
         } else if (table[row][column + 1] == 0) {
-            answer[index + 1] = imageView;
-            answer[index] = null;
+            current[number] = index + 1;
             table[row][column + 1] = 1;
             table[row][column] = 0;
             updateTable();
@@ -129,11 +131,12 @@ public class ControllerFirstTask {
 
     private void updateTable() {
         userGridPane.getChildren().clear();
-        for (int k = 0; k < answer.length; k++) {
-            if (answer[k] != null) {
-                int indI = k / num;
-                int indJ = k % num;
-                userGridPane.add(answer[k], indJ, indI);
+        for (int k = 0; k < current.length - 1; k++) {
+            if (k != num - 1) {
+                int index = current[k];
+                int indI = index / num;
+                int indJ = index % num;
+                userGridPane.add(images[k], indJ, indI);
             }
         }
     }
@@ -161,7 +164,8 @@ public class ControllerFirstTask {
     private void shuffle() {
         boolean[] used = new boolean[num * num];
         table = new int[num + 2][num + 2];
-        answer = new ImageView[num * num + 1];
+        current = new int[num * num + 1];
+        Arrays.fill(current, -1);
         userGridPane.getChildren().clear();
         for (int i = 0; i <= num + 1; i++) {
             for (int j = 0; j <= num + 1; j++) {
@@ -172,7 +176,6 @@ public class ControllerFirstTask {
 
         }
         for (int i = 0; i < num * num; i++) {
-
             if (i != num - 1) {
                 while (true) {
                     int a = Math.abs(random.nextInt() % (num * num));
@@ -184,8 +187,7 @@ public class ControllerFirstTask {
 
 
                         table[indI + 1][indJ + 1] = 1;
-                        answer[a] = images[i];
-
+                        current[i] = a;
                         userGridPane.add(images[i], indJ, indI);
                         break;
                     }
@@ -200,7 +202,7 @@ public class ControllerFirstTask {
         boolean flag = true;
         for (int i = 0; i < num * num; i++) {
             if (i != num - 1) {
-                if (!(answer[i] == images[i])) {
+                if (!(current[i] == i)) {
                     flag = false;
                     break;
                 }
