@@ -193,8 +193,9 @@ public class ControllerFirstTask {
                     }
                 }
             }
-
-
+        }
+        if (!isSolvable()) {
+            shuffle();
         }
     }
 
@@ -212,6 +213,20 @@ public class ControllerFirstTask {
             Alert alert = new Alert(Alert.AlertType.NONE, "You did it", ButtonType.OK);
             alert.showAndWait();
         }
+    }
+
+    private boolean isSolvable() {
+        int countInversions = 0;
+
+        for (int i = 0; i < num * num + 1; i++) {
+            for (int j = 0; j < i; j++) {
+                if (current[j] > current[i])
+                    countInversions++;
+            }
+
+        }
+
+        return countInversions % 2 == 0;
     }
 
 
